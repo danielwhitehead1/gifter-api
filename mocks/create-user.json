@@ -1,0 +1,10 @@
+{
+  "request": { 
+    "userAttributes": {
+      "custom:firstname": "Mock",
+      "custom:surname": "Test",
+      "email": "giftermockuser@yopmail.com"
+    }
+  },
+  "userName": "USER-SUB-1234"
+}

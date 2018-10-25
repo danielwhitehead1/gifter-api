@@ -1,0 +1,72 @@
+# NOTE: update this with your service name
+service: gifter-api
+
+# Use the serverless-webpack plugin to transpile ES6
+plugins:
+  - serverless-webpack
+  - serverless-offline
+
+# serverless-webpack configuration
+# Enable auto-packing of external modules
+custom:
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: prod
+  region: eu-west-2
+  # To load environment variables externally
+  # rename env.example to env.yml and uncomment
+  # the following line. Also, make sure to not
+  # commit your env.yml.
+  #
+  #environment: ${file(env.yml):${self:provider.stage}}
+
+iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource: "arn:aws:dynamodb:eu-west-2:*:*"
+
+functions:
+  create_user:
+    handler: createUser.main
+    events:
+      - http:
+          path: users
+          method: post
+          cors: true
+          authorizer: aws_iam
+  get_user:
+    handler: getUser.main
+    events: 
+      - http:
+          path: users
+          method: get
+          cors: true
+          authorizer: aws_iam
+  update_user:
+    handler: updateUser.main
+    events: 
+      - http:
+          path: users
+          method: put
+          cors: true
+          authorizer: aws_iam
+  delete_user:
+    handler: deleteUser.main
+    events: 
+      - http:
+          path: users
+          method: delete
+          cors: true
+          authorizer: aws_iam
