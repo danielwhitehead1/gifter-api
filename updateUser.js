@@ -1,28 +1,22 @@
-import * as dynamoDb from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
+import mysqlPool from "./libs/createpool-lib";
+import { getUserName } from "./libs/getUserName-lib";
 
-export async function main(event, context, callback) {
+var pool = mysqlPool
+
+export function main(event, context, callback) {
   const data = JSON.parse(event.body);
-  const params = {
-    TableName: "users",
-    Key : {
-      userId: event.requestContext.identity.cognitoIdentityId
-    },
-    UpdateExpression: "SET #userName = :name",
-    ExpressionAttributeValues: {
-      ":name": data.name ? data.name : null
-    },
-    ExpressionAttributeNames: {
-      "#userName": "name"
-    },
-    ReturnValues: "ALL_NEW"
-  }
+  let cognitoId = getUserName(event);
+  
+  pool.getConnection(function(err, connection) {
+    if(err) console.log(err);
 
-  try {
-    const result = await dynamoDb.call("update", params);
-    callback(null, success({status: true}));
-  } catch(e) {
-    console.log(e);
-    callback(null, failure({status: false}));
-  }
+    connection.query("SOME SQL", function(error, results, fields) {
+      if(error) {
+        console.log(error);
+        callback(null, failure({status: false, error: "Update Failed."}));
+      };
+      callback(null, success({status: true}));
+    })
+  })
 }

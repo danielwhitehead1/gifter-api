@@ -1,19 +1,21 @@
-import * as dynamoDb from "./libs/dynamodb-lib";
 import { success, failure } from "./libs/response-lib";
+import mysqlPool from "./libs/createpool-lib";
+import { getUserName } from "./libs/getUserName-lib";
 
-export async function main(event, context, callback) {
-  const params = {
-    TableName: "users",
-    Key: {
-      userId: event.requestContext.identity.cognitoIdentityId
-    }
-  }
+var pool = mysqlPool;
 
-  try {
-    const result = await dynamoDb.call("delete", params);
-    callback(null, success({ status: true }));
-  } catch(e) {
-    console.log(e);
-    callback(null, failure({status: false }));
-  }
+export function main(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
+  let cognitoId = getUserName(event);
+  pool.getConnection(function(err, connection) {
+    if(err) console.log(err);
+
+    connection.query("DELETE FROM users WHERE cognitoId= ?", cognitoId, function(error, results, fields) {
+      if(error) {
+        console.log(error);
+        callback(null, failure({status: false, error: "User not deleted"}))
+      }
+      callback(null, success({state: true}))
+    });
+  })
 }

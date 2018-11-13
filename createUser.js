@@ -1,23 +1,29 @@
-import * as dynamoDbLib from "./libs/dynamodb-lib";
+import mysqlPool from './libs/createpool-lib';
 
-export async function main(event, context, callback) {
+var pool  = mysqlPool
+
+export function main(event, context, callback) {
+  context.callbackWaitsForEmptyEventLoop = false;
   const userAttributes = event.request.userAttributes;
-  const params = {
-    TableName: "users",
-    Item: {
-      userId: event.userName,
-      firstname: userAttributes['custom:firstname'],
-      surname: userAttributes['custom:surname'],
-      email: userAttributes['email'],
-      createdAt: Date.now()
-    }
-  };
-
-  try {
-    await dynamoDbLib.call("put", params);
-    callback(null, event);
-  } catch (e) {
-    console.log(e);
-    callback(null, {});
+  var user = {
+    cognitoId: event.userName,
+    firstname: userAttributes['custom:firstname'],
+    surname: userAttributes['custom:surname'],
+    email: userAttributes['email'],
+    createdAt: Date.now()
   }
+
+  pool.getConnection(function(err, connection) {
+    if (err) console.log(err);
+  
+    connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
+      connection.release();
+  
+      if (error) {
+        console.log(error);
+        callback(null, {}); 
+      }
+      callback(null, event);
+    });
+  });
 }

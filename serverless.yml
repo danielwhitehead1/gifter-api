@@ -18,24 +18,13 @@ provider:
   runtime: nodejs8.10
   stage: prod
   region: eu-west-2
+  timeout: 30
   # To load environment variables externally
   # rename env.example to env.yml and uncomment
   # the following line. Also, make sure to not
   # commit your env.yml.
   #
   #environment: ${file(env.yml):${self:provider.stage}}
-
-iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:DescribeTable
-        - dynamodb:Query
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource: "arn:aws:dynamodb:eu-west-2:*:*"
 
 functions:
   create_user:
@@ -70,3 +59,11 @@ functions:
           method: delete
           cors: true
           authorizer: aws_iam
+  create_event:
+    handler: createEvent.main
+    events: 
+      - http:
+          path: events
+          method: post
+          cors: true
+          authorizer: aws_iam        
