@@ -66,4 +66,60 @@ functions:
           path: events
           method: post
           cors: true
-          authorizer: aws_iam        
+          authorizer: aws_iam
+  update_event:
+    handler: updateEvent.main
+    events: 
+      - http:
+          path: events
+          method: put
+          cors: true
+          authorizer: aws_iam  
+  delete_event:
+    handler: deleteEvent.main
+    events: 
+      - http:
+          path: events
+          method: delete
+          cors: true
+          authorizer: aws_iam       
+  get_events:
+      handler: getEvents.main
+      events: 
+        - http:
+            path: events
+            method: get
+            cors: true
+            authorizer: aws_iam 
+  create_contact:
+    handler: createContact.main
+    events: 
+      - http:
+          path: contacts
+          method: post
+          cors: true
+          authorizer: aws_iam
+  update_contact:
+    handler: updateContact.main
+    events: 
+      - http:
+          path: contacts
+          method: put
+          cors: true
+          authorizer: aws_iam     
+  delete_contact:
+    handler: deleteContact.main
+    events: 
+      - http:
+          path: contacts
+          method: delete
+          cors: true
+          authorizer: aws_iam                  
+  get_contacts:
+      handler: getContacts.main
+      events: 
+        - http:
+            path: contacts
+            method: get
+            cors: true
+            authorizer: aws_iam                  

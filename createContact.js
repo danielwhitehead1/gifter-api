@@ -14,7 +14,7 @@ export function main(event, context, callback) {
   pool.getConnection(function(err, connection) {
     if(err) console.log(err);
 
-    connection.query("INSERT INTO events SET ?", body, function(error, results, fields) {
+    connection.query("INSERT INTO contacts SET ?", body, function(error, results, fields) {
       if(error) {
         console.log(error);
         callback(null, failure({status: false, error: "Event not created."}));

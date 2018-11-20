@@ -9,15 +9,20 @@ export function main(event, context, callback) {
   const userSub = getUserName(event);
   const body = JSON.parse(event.body)
   body.userCognitoId = userSub;
-  body.createdAt = Date.now();
+  body.updatedAt = Date.now();
 
   pool.getConnection(function(err, connection) {
     if(err) console.log(err);
 
-    connection.query("INSERT INTO events SET ?", body, function(error, results, fields) {
+    connection.query(
+      `
+        UPDATE contacts SET ? 
+        WHERE id=${body.id} AND userCognitoId="${body.userCognitoId}"
+      `
+      , body, function(error, results, fields) {
       if(error) {
         console.log(error);
-        callback(null, failure({status: false, error: "Event not created."}));
+        callback(null, failure({status: false, error: "Event not updated."}));
       }
       callback(null, success({status: true}));
     });
