@@ -122,4 +122,12 @@ functions:
             path: contacts
             method: get
             cors: true
-            authorizer: aws_iam                  
+            authorizer: aws_iam
+  get_tags:
+      handler: getTags.main
+      events: 
+        - http:
+            path: tags
+            method: get
+            cors: true
+            authorizer: aws_iam                              

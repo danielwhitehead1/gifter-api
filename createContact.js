@@ -7,19 +7,36 @@ var pool = mysqlPool
 export function main(event, context, callback) {
   context.callbackWaitsForEmptyEventLoop = false;
   const userSub = getUserName(event);
-  const body = JSON.parse(event.body)
-  body.userCognitoId = userSub;
-  body.createdAt = Date.now();
+  const body = JSON.parse(event.body);
+  let contact = body.contact;
+  let tags = body.keywords;
+  contact.userCognitoId = userSub;
+  contact.createdAt = Date.now();
 
   pool.getConnection(function(err, connection) {
     if(err) console.log(err);
 
-    connection.query("INSERT INTO contacts SET ?", body, function(error, results, fields) {
+    connection.query("INSERT INTO contacts SET ?", contact, function(error, results, fields) {
       if(error) {
         console.log(error);
-        callback(null, failure({status: false, error: "Event not created."}));
+        callback(null, failure({status: false, error: "Contact not created."}));
       }
-      callback(null, success({status: true}));
+      let values = [];
+      tags.map(function(tag) {
+        return(values.push([userSub, results.insertId, tag, contact.createdAt]))
+      });
+      connection.query(
+        `
+          INSERT INTO tags (userCognitoId, contactId, tag, createdAt)
+          VALUES ?
+        `
+        , [values], function(error, results, fields) {
+          if(error) {
+            console.log(error);
+            callback(null, failure({status: false, error: "Contact tags not created."}));
+          }
+          callback(null, success({status: true}));
+      });
     });
   });
 }
