@@ -17,7 +17,7 @@ export function main(event, context, callback) {
     connection.query(
       `
         DELETE FROM suggestions 
-        WHERE itemId=${body.itemId} AND userCognitoId="${userSub}" AND contactId=${body.contactId}
+        WHERE itemId=${body.itemId} AND userCognitoId="${userSub}" AND contactId=${body.contactId} AND source = ${body.source}
       `
       , body, function(error, results, fields) {
       if(error) {
