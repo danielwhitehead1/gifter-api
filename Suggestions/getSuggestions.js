@@ -14,7 +14,7 @@ export function main(event, context, callback) {
 
     connection.query(
       `
-        SELECT title, url, itemId
+        SELECT title, url, itemId, saved, seller, imgURL
         FROM suggestions 
         WHERE userCognitoId = "${cognitoId}" AND contactId = ${params.contactId}
       `

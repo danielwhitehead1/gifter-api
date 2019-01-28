@@ -13,7 +13,7 @@ export function main(event, context, callback) {
 
     connection.query(
       `
-        SELECT id, firstname, surname
+        SELECT id, firstname, surname, gender
         FROM contacts 
         WHERE userCognitoId = ?
         ORDER BY firstname ASC

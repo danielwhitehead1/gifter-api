@@ -11,13 +11,10 @@ export function main(event, context, callback) {
 
   pool.getConnection(function(err, connection) {
     if(err) console.log(err);
-    console.log(body);
-    console.log(userSub);
-
     connection.query(
       `
         DELETE FROM suggestions 
-        WHERE itemId=${body.itemId} AND userCognitoId="${userSub}" AND contactId=${body.contactId} AND source = ${body.source}
+        WHERE itemId=${body.itemId} AND userCognitoId="${userSub}" AND contactId=${body.contactId} AND seller="${body.seller}"
       `
       , body, function(error, results, fields) {
       if(error) {

@@ -146,6 +146,14 @@ functions:
             method: post
             cors: true
             authorizer: aws_iam
+  update_suggestion:
+    handler: Suggestions/updateSuggestion.main
+    events: 
+      - http:
+          path: suggestions
+          method: put
+          cors: true
+          authorizer: aws_iam             
   delete_suggestion:
     handler: Suggestions/deleteSuggestion.main
     events: 
@@ -153,7 +161,7 @@ functions:
           path: suggestions
           method: delete
           cors: true
-          authorizer: aws_iam             
+          authorizer: aws_iam           
   get_suggestions:
     handler: Suggestions/getSuggestions.main
     events: 

@@ -28,7 +28,7 @@ export function main(event, context, callback) {
         connection.query(
           `
           DELETE FROM tags WHERE contactId=${body.id} AND userCognitoId="${userSub}";
-        `,
+          `,
           function(error, results) {
             if (error) {
               console.log(error);
@@ -37,9 +37,22 @@ export function main(event, context, callback) {
                 error: "Tags not deleted."
               }));
             }
-            callback(null, success({
-              status: true
-            }));
+            connection.query(
+              `
+              DELETE FROM suggestions WHERE contactId=${body.id} AND userCognitoId="${userSub}";
+              `,
+              function(error, results) {
+                if (error) {
+                  console.log(error);
+                  callback(null, failure({
+                    status: false,
+                    error: "Suggestions not deleted."
+                  }));
+                }
+                callback(null, success({
+                  status: true
+                }));
+              });
           });
       });
   });
