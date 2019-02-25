@@ -21,8 +21,10 @@ export function main(event, context, callback) {
   
       if (error) {
         console.log(error);
+        connection.release();
         callback(null, {}); 
       }
+      connection.release();
       callback(null, event);
     });
   });

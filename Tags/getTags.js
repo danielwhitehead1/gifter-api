@@ -21,9 +21,10 @@ export function main(event, context, callback) {
       , function(error, results, fields) {
       if(error) {
         console.log(error);
+        connection.release();
         callback(null, failure({state: false, error: "Failed to get tags."}));
       }
-      console.log(results);
+      connection.release();
       callback(null, success(results));
     })
   });

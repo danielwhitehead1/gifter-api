@@ -22,8 +22,10 @@ export function main(event, context, callback) {
       ,body , function(error, results, fields) {
       if(error) {
         console.log(error);
+        connection.release();
         callback(null, failure({state: false, error: "Failed to update suggestion."}));
       }
+      connection.release();
       callback(null, success({status: true}));
     })
   });

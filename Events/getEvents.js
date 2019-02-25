@@ -22,7 +22,7 @@ export function main(event, context, callback) {
         console.log(error);
         callback(null, failure({state: false, error: "Failed to get events."}));
       }
-      console.log(results);
+      connection.release();
       callback(null, success(results));
     })
   });

@@ -14,8 +14,10 @@ export function main(event, context, callback) {
     connection.query("SOME SQL", function(error, results, fields) {
       if(error) {
         console.log(error);
+        connection.release();
         callback(null, failure({status: false, error: "Update Failed."}));
       };
+      connection.release();
       callback(null, success({status: true}));
     })
   })

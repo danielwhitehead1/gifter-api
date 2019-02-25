@@ -14,16 +14,17 @@ export function main(event, context, callback) {
 
     connection.query(
       `
-        SELECT title, url, itemId, saved, seller, imgURL
+        SELECT title, url, itemId, saved, category, similarSuggestion, rated, seller, imgURL
         FROM suggestions 
         WHERE userCognitoId = "${cognitoId}" AND contactId = ${params.contactId}
       `
       , function(error, results, fields) {
       if(error) {
         console.log(error);
+        connection.release();
         callback(null, failure({state: false, error: "Failed to get suggestions."}));
       }
-      console.log(results);
+      connection.release();
       callback(null, success(results));
     })
   });

@@ -14,13 +14,15 @@ export function main(event, context, callback) {
     connection.query(
       `
         DELETE FROM suggestions 
-        WHERE itemId=${body.itemId} AND userCognitoId="${userSub}" AND contactId=${body.contactId} AND seller="${body.seller}"
+        WHERE itemId="${body.itemId}" AND userCognitoId="${userSub}" AND contactId=${body.contactId} AND seller="${body.seller}"
       `
       , body, function(error, results, fields) {
       if(error) {
         console.log(error);
+        connection.release();
         callback(null, failure({status: false, error: "Suggestion not deleted."}));
       }
+      connection.release();
       callback(null, success({status: true}));
     });
   });

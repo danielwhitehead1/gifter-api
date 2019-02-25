@@ -45,23 +45,31 @@ export function main(event, context, callback) {
             tags.map(function(tag) {
               return (values.push([userSub, contact.id, tag, contact.updatedAt]))
             });
-            connection.query(
-              `
-                INSERT INTO tags (userCognitoId, contactId, tag, createdAt)
-                VALUES ?
-              `, [values],
-              function(error, results) {
-                if (error) {
-                  console.log(error);
-                  callback(null, failure({
-                    status: false,
-                    error: "Tags not created."
+            if(tags.length > 0) {
+              connection.query(
+                `
+                  INSERT INTO tags (userCognitoId, contactId, tag, createdAt)
+                  VALUES ?
+                `, [values],
+                function(error, results) {
+                  if (error) {
+                    console.log(error);
+                    callback(null, failure({
+                      status: false,
+                      error: "Tags not created."
+                    }));
+                  }
+                  connection.release();
+                  callback(null, success({
+                    status: true
                   }));
-                }
-                callback(null, success({
-                  status: true
-                }));
-              });
+                });
+            } else { 
+              connection.release();
+              callback(null, success({
+                status: true
+              }));
+            }
           });
       });
   });

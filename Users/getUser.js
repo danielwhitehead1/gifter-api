@@ -16,8 +16,10 @@ export function main(event, context, callback) {
   
       if (error) {
         console.log(error);
+        connection.release();
         callback(null, failure({ status: false, error: "Item not found." })); 
       }
+      connection.release();
       callback(null, success(results[0]));
     });
   });

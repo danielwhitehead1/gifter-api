@@ -22,6 +22,7 @@ export function main(event, context, callback) {
         console.log(error);
         callback(null, failure({status: false, error: "Event not deleted."}));
       }
+      connection.release();
       callback(null, success({status: true}));
     });
   });

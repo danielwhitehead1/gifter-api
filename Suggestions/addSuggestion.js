@@ -10,8 +10,6 @@ export function main(event, context, callback) {
   body.userCognitoId = getUserName(event);
   body.createdAt = Date.now();
 
-  console.log(body);
-
   pool.getConnection(function(err, connection) {
     if(err) console.log(err);
 

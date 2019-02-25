@@ -13,8 +13,10 @@ export function main(event, context, callback) {
     connection.query("DELETE FROM users WHERE cognitoId= ?", cognitoId, function(error, results, fields) {
       if(error) {
         console.log(error);
+        connection.release();
         callback(null, failure({status: false, error: "User not deleted"}))
       }
+      connection.release();
       callback(null, success({state: true}))
     });
   })

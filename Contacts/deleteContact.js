@@ -49,9 +49,36 @@ export function main(event, context, callback) {
                     error: "Suggestions not deleted."
                   }));
                 }
-                callback(null, success({
-                  status: true
-                }));
+                connection.query(
+                  `
+                  DELETE FROM ratings WHERE contactId=${body.id} AND userCognitoId="${userSub}";
+                  `,
+                  function(error, results) {
+                    if (error) {
+                      console.log(error);
+                      callback(null, failure({
+                        status: false,
+                        error: "Ratings not deleted."
+                      }));
+                    }
+                    connection.query(
+                      `
+                      UPDATE events SET contactId=0 WHERE contactId=${body.id} AND userCognitoId="${userSub}"
+                      `, 
+                      function(error, results) {
+                        if(error) {
+                          console.log(error);
+                          callback(null, failure({
+                            statuse: false,
+                            error: 'Event contact not deleted.'
+                          }))
+                        }
+                        connection.release();
+                        callback(null, success({
+                          status: true
+                        }));
+                      });
+                  });
               });
           });
       });
