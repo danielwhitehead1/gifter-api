@@ -16,16 +16,33 @@ export function main(event, context, callback) {
       `
         SELECT title, url, itemId, saved, category, similarSuggestion, rated, seller, imgURL
         FROM suggestions 
-        WHERE userCognitoId = "${cognitoId}" AND contactId = ${params.contactId}
+        WHERE userCognitoId = "${cognitoId}" AND contactId = ${params.contactId} AND similarSuggestion = 0
       `
-      , function(error, results, fields) {
+      , function(error, nonSimilarResults, fields) {
       if(error) {
         console.log(error);
         connection.release();
         callback(null, failure({state: false, error: "Failed to get suggestions."}));
       }
-      connection.release();
-      callback(null, success(results));
+      connection.query(
+        `
+          SELECT title, url, itemId, saved, category, similarSuggestion, rated, seller, imgURL
+          FROM suggestions 
+          WHERE userCognitoId = "${cognitoId}" AND contactId = ${params.contactId} AND similarSuggestion = 1
+          ORDER BY id DESC
+          LIMIT 3
+        `, function(error, similarResults) {
+          if(error) {
+            console.log(error);
+            connection.release();
+            callback(null, failure({state: false, error: "Failed to get suggestions."}));
+          }
+          const results = [...nonSimilarResults, ...similarResults];
+          console.log(results);
+          connection.release();
+          callback(null, success(results));
+        }
+      )
     })
   });
 }
