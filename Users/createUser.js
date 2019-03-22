@@ -16,9 +16,7 @@ export function main(event, context, callback) {
   pool.getConnection(function(err, connection) {
     if (err) console.log(err);
   
-    connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {
-      connection.release();
-  
+    connection.query('INSERT INTO users SET ?', user, function (error, results, fields) {  
       if (error) {
         console.log(error);
         connection.release();
